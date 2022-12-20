@@ -140,7 +140,24 @@ class AvroSchemaConverterTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(
                         "Avro does not support TIMESTAMP type with precision: 9, "
-                                + "it only supports precision less than 3.");
+                                + "it only supports precision equal or less than 3.");
+    }
+
+    @Test
+    void testInvalidTimestampWithLocalTimeZoneTypeAvroSchemaConversion() {
+        RowType rowType =
+                (RowType)
+                        ResolvedSchema.of(
+                                        Column.physical("a", DataTypes.STRING()),
+                                        Column.physical("b", DataTypes.TIMESTAMP_LTZ(9)))
+                                .toSourceRowDataType()
+                                .getLogicalType();
+
+        assertThatThrownBy(() -> AvroSchemaConverter.convertToSchema(rowType))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(
+                        "Avro does not support TIMESTAMP type with precision: 9, "
+                                + "it only supports precision equal or less than 3.");
     }
 
     @Test
@@ -156,7 +173,8 @@ class AvroSchemaConverterTest {
         assertThatThrownBy(() -> AvroSchemaConverter.convertToSchema(rowType))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(
-                        "Avro does not support TIME type with precision: 6, it only supports precision less than 3.");
+                        "Avro does not support TIME type with precision: 6, it only supports "
+                                + "precision equal or less than 3.");
     }
 
     @Test
@@ -256,6 +274,7 @@ class AvroSchemaConverterTest {
                         // binary converts to bytes
                         DataTypes.FIELD("f_varbinary", DataTypes.BYTES()),
                         DataTypes.FIELD("f_timestamp", DataTypes.TIMESTAMP(3)),
+                        DataTypes.FIELD("f_timestamp_ltz", DataTypes.TIMESTAMP_LTZ(3)),
                         DataTypes.FIELD("f_date", DataTypes.DATE()),
                         DataTypes.FIELD("f_time", DataTypes.TIME(3)),
                         DataTypes.FIELD("f_decimal", DataTypes.DECIMAL(10, 0)),
@@ -291,6 +310,7 @@ class AvroSchemaConverterTest {
                                 // binary converts to bytes
                                 DataTypes.FIELD("f_varbinary", DataTypes.BYTES().notNull()),
                                 DataTypes.FIELD("f_timestamp", DataTypes.TIMESTAMP(3).notNull()),
+                                DataTypes.FIELD("f_timestamp_ltz", DataTypes.TIMESTAMP_LTZ(3)),
                                 DataTypes.FIELD("f_date", DataTypes.DATE().notNull()),
                                 DataTypes.FIELD("f_time", DataTypes.TIME(3).notNull()),
                                 DataTypes.FIELD("f_decimal", DataTypes.DECIMAL(10, 0).notNull()),

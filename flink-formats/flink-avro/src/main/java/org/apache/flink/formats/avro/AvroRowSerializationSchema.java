@@ -48,6 +48,7 @@ import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -253,6 +254,8 @@ public class AvroRowSerializationSchema implements SerializationSchema<Row> {
                     return convertFromTimestamp(schema, Timestamp.valueOf((LocalDateTime) object));
                 } else if (object instanceof Time) {
                     return convertFromTimeMicros(schema, (Time) object);
+                } else if (object instanceof Instant) {
+                    return ((Instant) object).toEpochMilli();
                 }
                 return object;
             case FLOAT:
