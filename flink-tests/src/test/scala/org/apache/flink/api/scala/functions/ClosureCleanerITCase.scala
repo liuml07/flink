@@ -17,7 +17,6 @@
  */
 package org.apache.flink.api.scala.functions
 
-import org.apache.flink.api.common.InvalidProgramException
 import org.apache.flink.api.scala._
 import org.apache.flink.api.scala.ExecutionEnvironment
 import org.apache.flink.core.fs.FileSystem.WriteMode
